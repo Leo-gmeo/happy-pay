@@ -1,0 +1,116 @@
+
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>好快樂行銷｜付款頁面</title>
+  <style>
+    body {
+      font-family: "Arial", sans-serif;
+      background-color: #fffef8;
+      color: #333;
+      padding: 2rem;
+    }
+    .form {
+      max-width: 480px;
+      margin: auto;
+      background: white;
+      padding: 2rem;
+      border-radius: 16px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    h1 {
+      font-size: 24px;
+      color: #f48fb1;
+      margin-bottom: 1rem;
+    }
+    label {
+      display: block;
+      margin-top: 1rem;
+    }
+    input, select {
+      width: 100%;
+      padding: 0.5rem;
+      margin-top: 0.25rem;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+    }
+    button {
+      margin-top: 1.5rem;
+      background: #ffd54f;
+      padding: 0.75rem 1.5rem;
+      border: none;
+      border-radius: 8px;
+      font-weight: bold;
+      cursor: pointer;
+      width: 100%;
+    }
+  </style>
+</head>
+<body>
+  <div class="form">
+    <h1>立即付款｜好快樂行銷</h1>
+    <form id="payForm">
+      <label>姓名</label>
+      <input type="text" name="name" required />
+      <label>Email</label>
+      <input type="email" name="email" required />
+      <label>聯絡電話</label>
+      <input type="tel" name="phone" required />
+      <label>地址</label>
+      <input type="text" name="address" required />
+      <label>付款項目</label>
+      <select name="paymentType" required>
+        <option value="訂金（一次性）">訂金（一次性）</option>
+        <option value="定期定額">定期定額</option>
+      </select>
+      <label>付款金額（元）</label>
+      <input type="number" name="amount" value="1500" required min="1" step="1" />
+      <button type="submit">前往付款</button>
+    </form>
+  </div>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const form = document.getElementById("payForm");
+      form.addEventListener("submit", async function (e) {
+        e.preventDefault();
+
+        const data = {
+          name: form.name.value.trim(),
+          email: form.email.value.trim(),
+          phone: form.phone.value.trim(),
+          address: form.address.value.trim(),
+          paymentType: form.paymentType.value,
+          amount: parseInt(form.amount.value, 10)
+        };
+
+        if (!data.name || !data.email || !data.phone || !data.address || !data.amount) {
+          alert("請完整填寫所有欄位");
+          return;
+        }
+
+        try {
+          const response = await fetch("https://script.google.com/macros/s/AKfycbz-NpUjFAgHfaMD-kJuWK7an42uUCo9oHaUHleIjKQMR8SNKc964DUXCr9J7YURijjl/exec", {
+            method: "POST",
+            body: JSON.stringify(data),
+            headers: { "Content-Type": "application/json" }
+          });
+
+          const html = await response.text();
+          const win = window.open();
+          if (win) {
+            win.document.write(html);
+          } else {
+            alert("請允許瀏覽器開啟新視窗以完成付款");
+          }
+        } catch (error) {
+          console.error("送出失敗：", error);
+          alert("付款頁面產生失敗，請稍後再試！");
+        }
+      });
+    });
+  </script>
+</body>
+</html>
